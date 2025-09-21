@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultimate Multi-Tool Website</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 20px;}
+h1 { color: #333; text-align: center;}
+section { background: white; padding: 20px; margin: 20px auto; border-radius: 10px; max-width: 600px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+input, textarea, button { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #ccc;}
+button { background: #4CAF50; color: white; border: none; cursor: pointer;}
+pre { background: #eee; padding: 10px; border-radius: 5px; overflow-x: auto;}
+</style>
+</head>
+<body>
+
+<h1>Ultimate Multi-Tool Website</h1>
+
+<!-- URL Shortener -->
+<section>
+<h2>URL Shortener (Demo)</h2>
+<input type="text" id="urlInput" placeholder="Enter URL">
+<button onclick="shortenURL()">Shorten URL</button>
+<p id="shortURL" style="color:blue;"></p>
+</section>
+
+<!-- Text to Code -->
+<section>
+<h2>Text to ASCII Code</h2>
+<textarea id="textInput" placeholder="Enter text"></textarea>
+<button onclick="textToCode()">Convert</button>
+<pre id="codeOutput"></pre>
+</section>
+
+<!-- Text to Base64 -->
+<section>
+<h2>Text ↔ Base64</h2>
+<textarea id="base64Text" placeholder="Enter text"></textarea>
+<button onclick="encodeBase64()">Encode</button>
+<button onclick="decodeBase64()">Decode</button>
+<pre id="base64Output"></pre>
+</section>
+
+<!-- Password Generator -->
+<section>
+<h2>Password Generator</h2>
+<input type="number" id="pwdLength" placeholder="Password length (8-32)" value="12">
+<button onclick="generatePassword()">Generate</button>
+<pre id="pwdOutput"></pre>
+</section>
+
+<!-- Number Converter -->
+<section>
+<h2>Number Converter</h2>
+<input type="number" id="numInput" placeholder="Enter number">
+<button onclick="toBinary()">Decimal → Binary</button>
+<button onclick="toHex()">Decimal → Hex</button>
+<pre id="numOutput"></pre>
+</section>
+
+<!-- ZIP File Creator -->
+<section>
+<h2>ZIP File Creator</h2>
+<textarea id="zipText" placeholder="Enter file content"></textarea>
+<input type="text" id="zipFilename" placeholder="Enter filename.txt">
+<button onclick="createZip()">Create ZIP</button>
+</section>
+
+<!-- JS Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+// URL Shortener Demo
+function shortenURL(){
+    let url = document.getElementById('urlInput').value;
+    if(url){
+        let short = 'https://short.ly/' + btoa(url).slice(0,6);
+        document.getElementById('shortURL').innerText = short;
+    }
+}
+
+// Text to ASCII
+function textToCode(){
+    let text = document.getElementById('textInput').value;
+    let code = '';
+    for(let i=0;i<text.length;i++){
+        code += text.charCodeAt(i)+' ';
+    }
+    document.getElementById('codeOutput').innerText = code.trim();
+}
+
+// Base64 Encode/Decode
+function encodeBase64(){
+    let text = document.getElementById('base64Text').value;
+    document.getElementById('base64Output').innerText = btoa(text);
+}
+function decodeBase64(){
+    let text = document.getElementById('base64Text').value;
+    try {
+        document.getElementById('base64Output').innerText = atob(text);
+    } catch(e){
+        document.getElementById('base64Output').innerText = "Invalid Base64!";
+    }
+}
+
+// Password Generator
+function generatePassword(){
+    let length = parseInt(document.getElementById('pwdLength').value) || 12;
+    let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+    let password = '';
+    for(let i=0;i<length;i++){
+        password += charset[Math.floor(Math.random()*charset.length)];
+    }
+    document.getElementById('pwdOutput').innerText = password;
+}
+
+// Number Converter
+function toBinary(){
+    let num = parseInt(document.getElementById('numInput').value);
+    document.getElementById('numOutput').innerText = num.toString(2);
+}
+function toHex(){
+    let num = parseInt(document.getElementById('numInput').value);
+    document.getElementById('numOutput').innerText = num.toString(16).toUpperCase();
+}
+
+// ZIP File Creator
+function createZip(){
+    let zip = new JSZip();
+    let content = document.getElementById('zipText').value;
+    let filename = document.getElementById('zipFilename').value || 'file.txt';
+    zip.file(filename, content);
+    zip.generateAsync({type:"blob"}).then(function(content){
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(content);
+        a.download = 'archive.zip';
+        a.click();
+    });
+}
+</script>
+
+</body>
+</html>
